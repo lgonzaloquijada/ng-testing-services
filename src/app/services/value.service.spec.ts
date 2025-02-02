@@ -1,6 +1,6 @@
 import { ValueService } from './value.service';
 
-fdescribe('ValueService', () => {
+describe('ValueService', () => {
   let service: ValueService;
 
   beforeEach(() => {
@@ -34,6 +34,15 @@ fdescribe('ValueService', () => {
     it('should return "promise" value from promise using done', (done) => {
       service.getPromiseValue().then((value) => {
         expect(value).toBe('promise value');
+        done();
+      });
+    });
+  });
+
+  describe('Tests for getObservableValue', () => {
+    it('should return "observable" value from observable', (done) => {
+      service.getObservableValue().subscribe((value) => {
+        expect(value).toBe('observable value');
         done();
       });
     });
