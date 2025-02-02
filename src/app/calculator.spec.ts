@@ -1,6 +1,17 @@
 import { Calculator } from './calculator';
 
-describe('Test for Calculator', () => {
+fdescribe('Test for Calculator', () => {
+  it('#add should return 5', () => {
+    //Arrange
+    const calculator = new Calculator();
+
+    //Act
+    const answer = calculator.add(2, 3);
+
+    //Assert
+    expect(answer).toBe(5);
+  });
+
   it('#multiply should return 9', () => {
     //Arrange
     const calculator = new Calculator();
@@ -32,6 +43,17 @@ describe('Test for Calculator', () => {
 
     //Assert
     expect(answer).toBe(3);
+  });
+
+  it('#divide should return null', () => {
+    //Arrange
+    const calculator = new Calculator();
+
+    //Act
+    const answer = calculator.divide(9, 0);
+
+    //Assert
+    expect(answer).toBeNull();
   });
 
   it('test matchers', () => {
