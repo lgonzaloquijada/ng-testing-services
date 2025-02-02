@@ -1,18 +1,19 @@
 // Karma configuration file, see link for more information
 // https://karma-runner.github.io/1.0/config/configuration-file.html
 
-const { single } = require('rxjs');
+const { single } = require("rxjs");
 
 module.exports = function (config) {
   config.set({
-    basePath: '',
-    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    basePath: "",
+    frameworks: ["jasmine", "@angular-devkit/build-angular"],
     plugins: [
-      require('karma-jasmine'),
-      require('karma-chrome-launcher'),
-      require('karma-jasmine-html-reporter'),
-      require('karma-coverage'),
-      require('@angular-devkit/build-angular/plugins/karma')
+      require("karma-jasmine"),
+      require("karma-chrome-launcher"),
+      require("karma-jasmine-html-reporter"),
+      require("karma-coverage"),
+      require("@angular-devkit/build-angular/plugins/karma"),
+      require("karma-mocha-reporter"),
     ],
     client: {
       jasmine: {
@@ -23,28 +24,25 @@ module.exports = function (config) {
       },
     },
     jasmineHtmlReporter: {
-      suppressAll: true // removes the duplicated traces
+      suppressAll: true, // removes the duplicated traces
     },
     coverageReporter: {
-      dir: require('path').join(__dirname, './coverage/ng-testing-services'),
-      subdir: '.',
-      reporters: [
-        { type: 'html' },
-        { type: 'text-summary' }
-      ],
+      dir: require("path").join(__dirname, "./coverage/ng-testing-services"),
+      subdir: ".",
+      reporters: [{ type: "html" }, { type: "text-summary" }],
       check: {
         global: {
           statements: 80,
           lines: 80,
           branches: 80,
-          functions: 80
-        }
-      }
+          functions: 80,
+        },
+      },
     },
-    reporters: ['progress', 'kjhtml'],
-    browsers: ['ChromeHeadless'],
+    reporters: ["mocha"],
+    browsers: ["ChromeHeadless"],
     restartOnFileChange: true,
     autoWatch: false,
-    singleRun: true
+    singleRun: true,
   });
 };
