@@ -15,7 +15,13 @@ fdescribe('MasterService', () => {
       const masterService = new MasterService(
         valueFakeService as unknown as ValueService
       );
-      expect(masterService.getValue()).toBe('fake promise value');
+      expect(masterService.getValue()).toBe('fake value');
+    });
+
+    it('should return "fake value object" from the fake object', () => {
+      const fake = { getValue: () => 'fake value object' };
+      const masterService = new MasterService(fake as ValueService);
+      expect(masterService.getValue()).toBe('fake value object');
     });
   });
 });
