@@ -24,4 +24,18 @@ fdescribe('ValueService', () => {
       expect(service.getValue()).toBe('new value');
     });
   });
+
+  describe('Tests for getPromiseValue', () => {
+    it('should return "promise" value from promise', async () => {
+      const value = await service.getPromiseValue();
+      expect(value).toBe('promise value');
+    });
+
+    it('should return "promise" value from promise using done', (done) => {
+      service.getPromiseValue().then((value) => {
+        expect(value).toBe('promise value');
+        done();
+      });
+    });
+  });
 });
