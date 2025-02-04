@@ -1,3 +1,11 @@
 <section class="container">
   <h1>Products componente</h1>
+  <div class="my-grid">
+    @for (product of products(); track $index) {
+    <figure>
+      <img [src]="product.images[0]" alt="Product Image" />
+      <figcaption>{{ product.title }} - {{ product.price }}</figcaption>
+    </figure>
+    }
+  </div>
 </section>
