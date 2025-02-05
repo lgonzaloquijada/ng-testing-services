@@ -8,6 +8,7 @@ import {
 import { provideHttpClient } from '@angular/common/http';
 import { Product } from '@models/product.model';
 import { environment } from '@src/environments/environment';
+import { ProductMock } from '@models/product.mock';
 
 fdescribe('ProductService', () => {
   let productService: ProductService;
@@ -28,24 +29,7 @@ fdescribe('ProductService', () => {
   describe('Tests for getAllSimple', () => {
     it('should return an array of products', (doneFn) => {
       // Arrange
-      const mockProducts: Product[] = [
-        {
-          id: '1',
-          title: 'Product 1',
-          price: 10,
-          images: [],
-          description: '',
-          category: { id: 1, name: 'Category 1' },
-        },
-        {
-          id: '2',
-          title: 'Product 2',
-          price: 20,
-          images: [],
-          description: '',
-          category: { id: 2, name: 'Category 2' },
-        },
-      ];
+      const mockProducts: Product[] = ProductMock.get(3);
 
       productService.getAllSimple().subscribe((products) => {
         // Assert
