@@ -357,5 +357,29 @@ fdescribe('ProductService', () => {
       expect(req.request.method).toBe('GET');
       req.flush(msgError, mockError);
     });
+
+    it('should throw an error when server fails', (doneFn) => {
+      // Arrange
+      const productId = '1';
+      const msgError = '500 Internal Server Error';
+      const mockError = {
+        status: HttpStatusCode.InternalServerError,
+        statusText: msgError,
+      };
+
+      productService.getOne(productId).subscribe({
+        error: (data) => {
+          // Assert
+          expect(data).toEqual('Ups algo salio mal');
+          doneFn();
+        },
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products/${productId}`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(msgError, mockError);
+    });
   });
 });
