@@ -246,4 +246,23 @@ fdescribe('ProductService', () => {
       expect(req.request.body).toEqual(dto);
     });
   });
+
+  describe('Tests for delete', () => {
+    it('should return true when deleting a product', (doneFn) => {
+      // Arrange
+      const deletingId = '1';
+
+      productService.delete(deletingId).subscribe((resp) => {
+        // Assert
+        expect(resp).toBeTrue();
+        doneFn();
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products/${deletingId}`;
+      const req = httpController.expectOne(url);
+      req.flush(true);
+      expect(req.request.method).toBe('DELETE');
+    });
+  });
 });
