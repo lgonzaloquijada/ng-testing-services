@@ -95,6 +95,33 @@ fdescribe('ProductService', () => {
       req.flush(mockProducts);
     });
 
+    it('should return 0 when price is 0 or negative', (doneFn) => {
+      // Arrange
+      const mockProducts: Product[] = [
+        {
+          ...ProductMock.getOne(),
+          price: 0,
+        },
+        {
+          ...ProductMock.getOne(),
+          price: -100,
+        },
+      ];
+
+      productService.getAll().subscribe((products) => {
+        // Assert
+        expect(products[0].taxes).toEqual(0);
+        expect(products[1].taxes).toEqual(0);
+        doneFn();
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockProducts);
+    });
+
     it('should return an array of products with taxes and retry 3 times', (doneFn) => {
       // Arrange
       const mockProducts: Product[] = ProductMock.get(3);
