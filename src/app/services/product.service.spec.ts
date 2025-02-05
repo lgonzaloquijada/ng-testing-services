@@ -333,5 +333,29 @@ fdescribe('ProductService', () => {
       expect(req.request.method).toBe('GET');
       req.flush(msgError, mockError);
     });
+
+    it('should throw an error when unauthorized', (doneFn) => {
+      // Arrange
+      const productId = '1';
+      const msgError = '401 Unauthorized';
+      const mockError = {
+        status: HttpStatusCode.Unauthorized,
+        statusText: msgError,
+      };
+
+      productService.getOne(productId).subscribe({
+        error: (data) => {
+          // Assert
+          expect(data).toEqual('No estas permitido');
+          doneFn();
+        },
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products/${productId}`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(msgError, mockError);
+    });
   });
 });
