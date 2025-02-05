@@ -5,7 +5,7 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpStatusCode, provideHttpClient } from '@angular/common/http';
 import { CreateProductDTO, Product } from '@models/product.model';
 import { environment } from '@src/environments/environment';
 import { ProductMock } from '@models/product.mock';
@@ -231,19 +231,20 @@ fdescribe('ProductService', () => {
         description: 'Description',
         categoryId: 12,
       };
+      const productId = '1';
 
-      productService.update('1', { ...dto }).subscribe((product) => {
+      productService.update(productId, { ...dto }).subscribe((product) => {
         // Assert
         expect(product).toEqual(mockProduct);
         doneFn();
       });
 
       // Act
-      const url = `${environment.API_URL}/api/v1/products/1`;
+      const url = `${environment.API_URL}/api/v1/products/${productId}`;
       const req = httpController.expectOne(url);
       expect(req.request.method).toBe('PUT');
-      req.flush(mockProduct);
       expect(req.request.body).toEqual(dto);
+      req.flush(mockProduct);
     });
   });
 
@@ -263,6 +264,74 @@ fdescribe('ProductService', () => {
       const req = httpController.expectOne(url);
       req.flush(true);
       expect(req.request.method).toBe('DELETE');
+    });
+  });
+
+  describe('Tests for getOne', () => {
+    it('should return a product', (doneFn) => {
+      // Arrange
+      const mockProduct: Product = ProductMock.getOne();
+      const productId = '1';
+
+      productService.getOne(productId).subscribe((product) => {
+        // Assert
+        expect(product).toEqual(mockProduct);
+        doneFn();
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products/${productId}`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockProduct);
+    });
+
+    it('should throw an error when product does not exist', (doneFn) => {
+      // Arrange
+      const productId = '1';
+      const msgError = '404 Not Found';
+      const mockError = {
+        status: HttpStatusCode.NotFound,
+        statusText: msgError,
+      };
+
+      productService.getOne(productId).subscribe({
+        error: (data) => {
+          // Assert
+          expect(data).toEqual('El producto no existe');
+          doneFn();
+        },
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products/${productId}`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(msgError, mockError);
+    });
+
+    it('should throw an error when server fails', (doneFn) => {
+      // Arrange
+      const productId = '1';
+      const msgError = '409 Conflict';
+      const mockError = {
+        status: HttpStatusCode.Conflict,
+        statusText: msgError,
+      };
+
+      productService.getOne(productId).subscribe({
+        error: (data) => {
+          // Assert
+          expect(data).toEqual('Algo esta fallando en el server');
+          doneFn();
+        },
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products/${productId}`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(msgError, mockError);
     });
   });
 });
