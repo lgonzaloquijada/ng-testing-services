@@ -219,4 +219,31 @@ fdescribe('ProductService', () => {
       expect(req.request.body).toEqual(dto);
     });
   });
+
+  describe('Tests for update', () => {
+    it('should return the updated product', (doneFn) => {
+      // Arrange
+      const mockProduct: Product = ProductMock.getOne();
+      const dto: CreateProductDTO = {
+        title: 'Product 1',
+        price: 100,
+        images: ['image1.jpg', 'image2.jpg'],
+        description: 'Description',
+        categoryId: 12,
+      };
+
+      productService.update('1', { ...dto }).subscribe((product) => {
+        // Assert
+        expect(product).toEqual(mockProduct);
+        doneFn();
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products/1`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      req.flush(mockProduct);
+      expect(req.request.body).toEqual(dto);
+    });
+  });
 });
