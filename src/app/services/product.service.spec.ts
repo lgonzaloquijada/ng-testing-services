@@ -166,5 +166,26 @@ fdescribe('ProductService', () => {
         })
       );
     });
+
+    it('should send query params with limit 10 and offset 3', (doneFn) => {
+      // Arrange
+      const mockProducts: Product[] = ProductMock.get(3);
+      const limit = 10;
+      const offset = 3;
+
+      productService.getAll(limit, offset).subscribe((products) => {
+        // Assert
+        expect(products.length).toEqual(mockProducts.length);
+        doneFn();
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products?limit=${limit}&offset=${offset}`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.params.get('limit')).toEqual(limit.toString());
+      expect(req.request.params.get('offset')).toEqual(offset.toString());
+      req.flush(mockProducts);
+    });
   });
 });
