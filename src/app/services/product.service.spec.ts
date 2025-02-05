@@ -26,6 +26,10 @@ fdescribe('ProductService', () => {
     expect(productService).toBeTruthy();
   });
 
+  afterEach(() => {
+    httpController.verify();
+  });
+
   describe('Tests for getAllSimple', () => {
     it('should return an array of products', (doneFn) => {
       // Arrange
@@ -213,7 +217,6 @@ fdescribe('ProductService', () => {
       expect(req.request.method).toBe('POST');
       req.flush(mockProduct);
       expect(req.request.body).toEqual(dto);
-      httpController.verify();
     });
   });
 });
