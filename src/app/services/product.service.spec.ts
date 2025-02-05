@@ -5,21 +5,35 @@ import {
   HttpTestingController,
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
-import { HttpStatusCode, provideHttpClient } from '@angular/common/http';
+import {
+  HTTP_INTERCEPTORS,
+  HttpStatusCode,
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 import { CreateProductDTO, Product } from '@models/product.model';
-import { environment } from '@src/environments/environment';
+import { environment } from '@environments/environment';
 import { ProductMock } from '@models/product.mock';
+import { TokenInterceptor } from '@interceptors/token.interceptor';
+import { TokenService } from './token.service';
 
 fdescribe('ProductService', () => {
   let productService: ProductService;
   let httpController: HttpTestingController;
+  let tokenService: TokenService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting(),
+        TokenService,
+        { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+      ],
     });
     productService = TestBed.inject(ProductService);
     httpController = TestBed.inject(HttpTestingController);
+    tokenService = TestBed.inject(TokenService);
   });
 
   it('should be created', () => {
@@ -64,6 +78,25 @@ fdescribe('ProductService', () => {
       const url = `${environment.API_URL}/api/v1/products`;
       const req = httpController.expectOne(url);
       expect(req.request.method).toBe('GET');
+      req.flush(mockProducts);
+    });
+
+    it('should return an array of products sending token', (doneFn) => {
+      // Arrange
+      const mockProducts: Product[] = ProductMock.get(3);
+      spyOn(tokenService, 'getToken').and.returnValue('123');
+
+      productService.getAll().subscribe((products) => {
+        // Assert
+        expect(products.length).toEqual(mockProducts.length);
+        doneFn();
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/products`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.headers.get('Authorization')).toEqual('Bearer 123');
       req.flush(mockProducts);
     });
 
