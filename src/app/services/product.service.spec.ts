@@ -17,7 +17,7 @@ import { ProductMock } from '@models/product.mock';
 import { TokenInterceptor } from '@interceptors/token.interceptor';
 import { TokenService } from './token.service';
 
-fdescribe('ProductService', () => {
+describe('ProductService', () => {
   let productService: ProductService;
   let httpController: HttpTestingController;
   let tokenService: TokenService;
