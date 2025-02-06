@@ -8,8 +8,7 @@ import {
 import { TokenService } from '@services/token.service';
 import { provideHttpClient } from '@angular/common/http';
 import { environment } from '@src/environments/environment';
-
-fdescribe('AuthService', () => {
+describe('AuthService', () => {
   let authService: AuthService;
   let httpController: HttpTestingController;
   let tokenService: TokenService;
