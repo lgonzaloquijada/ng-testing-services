@@ -16,6 +16,7 @@ import { environment } from '@environments/environment';
 import { ProductMock } from '@models/product.mock';
 import { TokenInterceptor } from '@interceptors/token.interceptor';
 import { TokenService } from './token.service';
+import { of } from 'rxjs';
 
 describe('ProductService', () => {
   let productService: ProductService;
@@ -42,6 +43,50 @@ describe('ProductService', () => {
 
   afterEach(() => {
     httpController.verify();
+  });
+
+  describe('Tests for getByCategory', () => {
+    it('should return an array of products', (doneFn) => {
+      // Arrange
+      const mockProducts: Product[] = ProductMock.get(3);
+      const categoryId = '1';
+
+      productService.getByCategory(categoryId).subscribe((products) => {
+        // Assert
+        expect(products).toEqual(mockProducts);
+        doneFn();
+      });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/categories/${categoryId}/products`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockProducts);
+    });
+
+    it('should send query params with limit 10 and offset 3', (doneFn) => {
+      // Arrange
+      const mockProducts: Product[] = ProductMock.get(3);
+      const categoryId = '1';
+      const limit = 10;
+      const offset = 3;
+
+      productService
+        .getByCategory(categoryId, limit, offset)
+        .subscribe((products) => {
+          // Assert
+          expect(products.length).toEqual(mockProducts.length);
+          doneFn();
+        });
+
+      // Act
+      const url = `${environment.API_URL}/api/v1/categories/${categoryId}/products?limit=${limit}&offset=${offset}`;
+      const req = httpController.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.params.get('limit')).toEqual(limit.toString());
+      expect(req.request.params.get('offset')).toEqual(offset.toString());
+      req.flush(mockProducts);
+    });
   });
 
   describe('Tests for getAllSimple', () => {
@@ -297,6 +342,36 @@ describe('ProductService', () => {
       const req = httpController.expectOne(url);
       req.flush(true);
       expect(req.request.method).toBe('DELETE');
+    });
+  });
+
+  describe('Tests for fetchReadAndUpdate', () => {
+    it('should return the updated product', (doneFn) => {
+      // Arrange
+      const mockProduct: Product = ProductMock.getOne();
+      const dto: CreateProductDTO = {
+        title: 'Product 1',
+        price: 100,
+        images: ['image1.jpg', 'image2.jpg'],
+        description: 'Description',
+        categoryId: 12,
+      };
+      const productId = '1';
+
+      spyOn(productService, 'getOne').and.returnValue(of(mockProduct));
+      spyOn(productService, 'update').and.returnValue(of(mockProduct));
+
+      productService
+        .fetchReadAndUpdate(productId, { ...dto })
+        .subscribe((product) => {
+          // Assert
+          expect(product[0]).toEqual(mockProduct);
+          doneFn();
+        });
+
+      // Act
+      expect(productService.getOne).toHaveBeenCalledWith(productId);
+      expect(productService.update).toHaveBeenCalledWith(productId, { ...dto });
     });
   });
 
