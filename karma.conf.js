@@ -41,6 +41,12 @@ module.exports = function (config) {
     },
     reporters: ["mocha"],
     browsers: ["ChromeHeadless"],
+    customLaunchers: {
+      ChromeHeadlessCI: {
+        base: "ChromeHeadless",
+        flags: ["--no-sandbox"],
+      },
+    },
     restartOnFileChange: true,
     autoWatch: false,
     singleRun: true,
