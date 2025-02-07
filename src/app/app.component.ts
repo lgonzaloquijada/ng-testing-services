@@ -9,7 +9,7 @@ import { Calculator } from './calculator';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  title = 'ng-testing-services';
+  title = 'Angular Testing';
 
   constructor() {}
 
